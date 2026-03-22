@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your IP — 1对1 私人咨询</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0E0E12;
+    --card:      #1C1C24;
+    --card2:     #222230;
+    --input-bg:  #26262F;
+    --border:    rgba(255,255,255,0.10);
+    --border-focus: rgba(201,168,76,0.55);
+    --gold:      #C9A84C;
+    --gold-dim:  rgba(201,168,76,0.12);
+    --text:      #F0F0F0;
+    --label:     #B0B0C0;
+    --muted:     rgba(200,200,220,0.45);
+    --faint:     rgba(200,200,220,0.22);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* subtle top glow */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -15vh; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .page {
+    position: relative; z-index: 1;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 64px 24px 80px;
+  }
+
+  /* ── Header ── */
+  header { text-align: center; margin-bottom: 52px; animation: fadeUp .7s ease both; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 24px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: ''; width: 24px; height: 1px; background: var(--gold); opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 7.5vw, 58px);
+    font-weight: 600; line-height: 1.1;
+    color: #fff; margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: italic;
+    background: linear-gradient(135deg, #C9A84C, #EDD98A, #C9A84C);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 15px; font-weight: 300;
+    color: var(--label); line-height: 1.85;
+    max-width: 400px; margin: 0 auto;
+  }
+
+  .gold-line {
+    width: 36px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto;
+  }
+
+  /* ── Form card ── */
+  .form-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    animation: fadeUp .7s .12s ease both;
+  }
+  .form-wrap::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .form-body { padding: 44px 40px; }
+
+  /* ── Section heading ── */
+  .sect {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px; margin-top: 40px;
+  }
+  .sect:first-of-type { margin-top: 0; }
+  .sect-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px; color: var(--gold); letter-spacing: 2px;
+  }
+  .sect-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .sect::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── Fields ── */
+  .field { margin-bottom: 22px; }
+
+  .field-label {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--label); margin-bottom: 9px; letter-spacing: 0.2px;
+  }
+  .field-label .req { color: var(--gold); margin-left: 2px; }
+  .hint { font-size: 11px; color: var(--faint); margin-top: 7px; }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:500px){ .row { grid-template-columns: 1fr; } }
+
+  /* ── Inputs — noticeably lighter ── */
+  input[type="text"], input[type="tel"], input[type="url"],
+  select, textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 4px;
+    color: #F4F4F4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 400;
+    padding: 13px 15px;
+    outline: none;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+    -webkit-appearance: none;
+  }
+  input::placeholder, textarea::placeholder {
+    color: rgba(200,200,220,0.30);
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--border-focus);
+    background: #2C2C38;
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.07);
+  }
+  select { cursor: pointer; }
+  select option { background: #26262F; color: #F4F4F4; }
+  textarea { resize: vertical; min-height: 96px; line-height: 1.7; }
+
+  /* ── Pills ── */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pills input { display: none; }
+  .pills label {
+    padding: 9px 15px;
+    background: var(--input-bg);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    font-size: 13px; font-weight: 400;
+    color: var(--label);
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .pills label:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: #fff;
+    background: #2C2C38;
+  }
+  .pills input:checked + label {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Submit ── */
+  .submit-area {
+    padding: 32px 40px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--card2);
+  }
+
+  .btn {
+    width: 100%; padding: 16px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px;
+    transition: all .3s;
+    position: relative; overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform .3s ease;
+    z-index: 0;
+  }
+  .btn:hover::before { transform: translateX(0); }
+  .btn:hover { color: #0E0E12; }
+  .btn span { position: relative; z-index: 1; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled::before { display: none; }
+
+  .legal {
+    text-align: center; margin-top: 16px;
+    font-size: 11px; color: var(--faint);
+    letter-spacing: 0.2px; line-height: 1.9;
+  }
+
+  /* ── Trust strip ── */
+  .trust {
+    display: flex; justify-content: center; gap: 28px;
+    flex-wrap: wrap; margin-top: 36px;
+    animation: fadeUp .7s .25s ease both;
+  }
+  .trust-item {
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.7; }
+
+  /* ── Success ── */
+  .success {
+    display: none; text-align: center; padding: 72px 40px;
+  }
+  .success-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px; color: var(--gold);
+    margin-bottom: 20px; display: block;
+  }
+  .success h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 600; color: #fff; margin-bottom: 14px;
+  }
+  .success p {
+    font-size: 14px; font-weight: 300;
+    color: var(--label); line-height: 2;
+  }
+  .success strong { color: var(--gold); font-weight: 500; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media(max-width:500px){
+    .form-body, .submit-area { padding-left: 20px; padding-right: 20px; }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="eyebrow">私人咨询</div>
+    <h1>Build Your<br><em>Personal IP</em></h1>
+    <div class="gold-line"></div>
+    <p class="subtitle">
+      填写以下资料，我会亲自审阅每一份申请<br>
+      并通过 WhatsApp 与你安排面谈。
+    </p>
+  </header>
+
+  <div class="form-wrap">
+    <form id="ipForm">
+      <div class="form-body">
+
+        <!-- 01 -->
+        <div class="sect">
+          <span class="sect-num">01</span>
+          <span class="sect-label">基本资料</span>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="field-label">名字 <span class="req">*</span></label>
+            <input type="text" name="name" placeholder="你的名字" required>
+          </div>
+          <div class="field">
+            <label class="field-label">WhatsApp 号码 <span class="req">*</span></label>
+            <input type="tel" name="phone" placeholder="0123456789" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">年龄段 <span class="req">*</span></label>
+          <div class="pills">
+            <input type="radio" name="age" id="a1" value="18-24" required>
+            <label for="a1">18 – 24</label>
+            <input type="radio" name="age" id="a2" value="25-34">
+            <label for="a2">25 – 34</label>
+            <input type="radio" name="age" id="a3" value="35-44">
+            <label for="a3">35 – 44</label>
+            <input type="radio" name="age" id="a4" value="45+">
+            <label for="a4">45 +</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label class="field-label">身份 <span class="req">*</span></label>
+            <div class="pills">
+              <input type="radio" name="identity" id="i1" value="上班族" required>
+              <label for="i1">上班族</label>
+              <input type="radio" name="identity" id="i2" value="老板">
+              <label for="i2">老板</label>
+              <input type="radio" name="identity" id="i3" value="个体">
+              <label for="i3">个体</label>
+              <input type="radio" name="identity" id="i4" value="自由职业">
+              <label for="i4">自由职业</label>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">具体职业 <span class="req">*</span></label>
+            <select name="occupation" required>
+              <option value="" disabled selected>请选择</option>
+              <optgroup label="专业人士">
+                <option>医生 / 牙医</option><option>律师</option>
+                <option>会计师</option><option>顾问</option>
+                <option>培训师 / 讲师</option><option>营养师</option>
+              </optgroup>
+              <optgroup label="教育">
+                <option>教师</option><option>补习老师</option>
+              </optgroup>
+              <optgroup label="商业">
+                <option>销售 / 业务</option><option>市场营销</option>
+                <option>电商卖家</option><option>餐饮业者</option>
+              </optgroup>
+              <optgroup label="创意 / 技术">
+                <option>设计师</option><option>摄影师 / 摄像师</option>
+                <option>IT / 工程师</option><option>内容创作者</option>
+              </optgroup>
+              <optgroup label="健康 / 美容">
+                <option>健身教练</option><option>美容 / SPA</option>
+              </optgroup>
+              <optgroup label="其他">
+                <option>HR / 行政</option><option>财务 / 保险</option>
+                <option>房地产经纪</option><option>其他</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- 02 -->
+        <div class="sect">
+          <span class="sect-num">02</span>
+          <span class="sect-label">你的现状</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label">你目前的状态 <span class="req">*</span></label>
+          <div class="pills">
+            <input type="radio" name="status" id="s1" value="零基础" required>
+            <label for="s1">🌱 零基础</label>
+            <input type="radio" name="status" id="s2" value="已经在拍内容">
+            <label for="s2">🎥 已经在拍内容</label>
+            <input type="radio" name="status" id="s3" value="有生意想引流">
+            <label for="s3">🚀 有生意想引流</label>
+            <input type="radio" name="status" id="s4" value="想经营个人品牌">
+            <label for="s4">💡 想经营个人品牌</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">你有在拍内容吗？如果有，附上链接</label>
+          <input type="url" name="content_link" placeholder="https://tiktok.com/@yourhandle（没有可留空）">
+          <div class="hint">TikTok · Instagram · YouTube 皆可</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">你目前最大的困难是什么？ <span class="req">*</span></label>
+          <textarea name="challenge" placeholder="例：不知道拍什么内容、没有方向、不懂怎么变现..." required></textarea>
+        </div>
+
+        <!-- 03 -->
+        <div class="sect">
+          <span class="sect-num">03</span>
+          <span class="sect-label">你的目标</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label">你希望在 1对1 面谈后得到什么？ <span class="req">*</span></label>
+          <textarea name="expectation" placeholder="例：清晰的内容方向、知道如何开始第一步、了解怎么用IP变现..." required></textarea>
+          <div class="hint">越具体，我越能帮你准备有针对性的内容</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">你方便在哪个区域见面？ <span class="req">*</span></label>
+          <select name="meeting_area" required>
+            <option value="" disabled selected>请选择</option>
+            <optgroup label="Klang Valley">
+              <option>KL City / Bukit Bintang</option>
+              <option>Petaling Jaya (PJ)</option>
+              <option>Subang / Shah Alam</option>
+              <option>Cheras / Ampang</option>
+              <option>Mont Kiara / Hartamas</option>
+              <option>Kepong / Selayang</option>
+            </optgroup>
+            <optgroup label="其他州属">
+              <option>Johor Bahru</option><option>Penang</option>
+              <option>Ipoh</option><option>Seremban</option><option>其他</option>
+            </optgroup>
+            <option value="线上">💻 线上（不在 KL）</option>
+          </select>
+        </div>
+
+      </div><!-- /form-body -->
+
+      <div class="submit-area">
+        <button type="submit" class="btn" id="submitBtn">
+          <span>提交申请</span>
+        </button>
+        <p class="legal">提交后我会在 48 小时内通过 WhatsApp 与你联系<br>所有资料严格保密，不会外传</p>
+      </div>
+
+      <div class="success" id="successMsg">
+        <span class="success-icon">✦</span>
+        <h2>申请已收到</h2>
+        <div class="gold-line" style="margin:18px auto 22px;"></div>
+        <p>谢谢你的申请。<br>我会在 <strong>48 小时内</strong> 通过 WhatsApp 联系你。<br><br>请留意陌生号码的消息 📱</p>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="trust">
+    <div class="trust-item"><div class="trust-dot"></div>资料保密</div>
+    <div class="trust-item"><div class="trust-dot"></div>免费咨询</div>
+    <div class="trust-item"><div class="trust-dot"></div>48小时内回复</div>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+  document.getElementById("ipForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    btn.querySelector("span").textContent = "提交中...";
+    btn.disabled = true;
+
+    const payload = {};
+    new FormData(this).forEach((v, k) => payload[k] = v);
+    payload.submitted_at = new Date().toLocaleString("zh-MY", { timeZone: "Asia/Kuala_Lumpur" });
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch(_) {}
+
+    document.querySelector(".form-body").style.display = "none";
+    document.querySelector(".submit-area").style.display = "none";
+    document.getElementById("successMsg").style.display = "block";
+  });
+</script>
+</body>
+</html>
